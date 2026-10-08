@@ -1,71 +1,95 @@
-/* import commentModel from '../Models/comments.model.js'
+import { getAllComments } from '../Models/comments.model.js';
+import { getCommentById } from '../Models/comments.model.js';
+import { insertComment } from '../Models/comments.model.js';
+import { updateComment } from '../Models/comments.model.js';
+import { deleteComment } from '../Models/comments.model.js';
 
-async function getAll(req, res) {
+
+async function getAllCommentsController(req, res) {
     try {
-        const comments = await commentModel.getAll();
-        res.json(comments);
+        const comments = await getAllComments();
+        res.status(200).json(comments);
     } catch (error) {
-        res.status(500).json({ error: "Une erreur est survenue lors de la récupération des commentaires" })
+        res.status(500).json({ message: 'Erreur serveur', error: error.message });
     }
 }
 
-async function getById(req, res) {
+
+async function getCommentByIdController(req, res) {
     try {
         const id = req.params.id;
-        const comments = await commentModel.getById(id);
-        res.json(comments[0]);
-    } catch (error) {
-        res.status(500).json({ error: "Une erreur est survenue lors de la récupération du commentaire" })
-    }
-}
+        const comment = await getCommentById(id);
 
-async function update(req, res) {
-    try {
-        const id = req.params.id;
-        const body = req.body;
-        let commentToUpdate = await commentModel.getById(id);
-        if (commentToUpdate.length === 0) {
-            return res.status(404).json({error : "Le commentaire n'existe pas"});
-        }
-        commentToUpdate = commentToUpdate[0];
-
-        if(body.comment){
-            commentToUpdate.co_comment = body.comment;
+        if (!comment) {
+            return res.status(404).json({ message: 'Commentaire non trouvé' });
         }
 
-        const updated = await commentModel.update(id, commentToUpdate);
-        res.json(updated);
+        res.status(200).json(comment);
     } catch (error) {
-        console.error(error);
-        
-        res.status(500).json({ error: "Une erreur est survenue lors de la modification du commentaire" })
+        res.status(500).json({ message: 'Erreur serveur', error: error.message });
     }
 }
 
-async function insert(req, res) {
+// 3. Créer un commentaire
+async function createCommentController(req, res) {
     try {
-        const body = req.body;
-        const inserted = await commentModel.insert(body);
-        res.status(201).json(inserted);
+        const content = req.body.content;
+        const user = req.body.user;
+        const event = req.body.event;
+
+        if (!content || !user || !event) {
+            return res.status(400).json({ message: 'Le contenu, l\'auteur et l\'événement sont obligatoires' });
+        }
+
+        const result = await insertComment(content, user, event);
+        res.status(201).json({ message: 'Commentaire créé avec succès', id: result.insertId });
     } catch (error) {
-        res.status(500).json({ error: "Une erreur est survenue lors de l'insertion du commentaire" })
+        res.status(500).json({ message: 'Erreur serveur', error: error.message });
     }
 }
 
-async function deleteComments(req, res) {
+// 4. Modifier un commentaire
+async function updateCommentController(req, res) {
     try {
         const id = req.params.id;
-        const deleted = await commentModel.deleteComments(id);
-        res.json(deleted);
+        const content = req.body.content;
+
+        if (!content) {
+            return res.status(400).json({ message: 'Le texte du commentaire est requis' });
+        }
+
+        const result = await updateComment(id, content);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'Commentaire non trouvé' });
+        }
+
+        res.status(200).json({ message: 'Commentaire mis à jour avec succès' });
     } catch (error) {
-        res.status(500).json({ error: "Une erreur est survenue lors de la suppression du commentaire" })
+        res.status(500).json({ message: 'Erreur serveur', error: error.message });
     }
 }
 
-export default {
-    getAll,
-    getById,
-    update,
-    insert,
-    deleteComments
-} */
+// 5. Supprimer un commentaire
+async function deleteCommentController(req, res) {
+    try {
+        const id = req.params.id;
+        const result = await deleteComment(id);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'Commentaire non trouvé' });
+        }
+
+        res.status(200).json({ message: 'Commentaire supprimé avec succès' });
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur serveur', error: error.message });
+    }
+}
+
+export {
+    getAllCommentsController,
+    getCommentByIdController,
+    createCommentController,
+    updateCommentController,
+    deleteCommentController
+};
