@@ -1,18 +1,20 @@
-/* import express from 'express'
-import UsersController from '../Controllers/users.controller.js'
+import express from 'express';
+
+import { getAllUsersController } from '../Controllers/users.controller.js';
+import { getUserByIdController } from '../Controllers/users.controller.js';
+import { updateUserController } from '../Controllers/users.controller.js';
+import { deleteUserController } from '../Controllers/users.controller.js';
+
+import checkToken from '../Middleware/auth.middleware.js';
 
 const router = express.Router();
 
-// /users/
-router.get('/', UsersController.getAll)
+router.get('/', getAllUsersController);
 
-// /users/:id
-router.get('/:id', UsersController.getById)
+router.get('/:id', getUserByIdController);
 
-router.patch('/:id', UsersController.update)
+router.patch('/:id', checkToken, updateUserController);
 
-router.post("/", UsersController.insert)
+router.delete('/:id', checkToken, deleteUserController);
 
-router.delete("/:id", UsersController.deleteUser);
-
-export default router; */
+export default router;

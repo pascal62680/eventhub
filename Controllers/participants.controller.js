@@ -1,4 +1,4 @@
-import { getAllParticipants } from '../Models/participants.model.js';
+import { getAllParticipant } from '../Models/participants.model.js';
 import { getEventsByUser } from '../Models/participants.model.js';
 import { getUsersByEvent } from '../Models/participants.model.js';
 import { insertParticipant } from '../Models/participants.model.js';
@@ -7,8 +7,8 @@ import { deleteParticipant } from '../Models/participants.model.js';
 
 async function getAllParticipantsController(req, res) {
     try {
-        const participants = await getAllParticipants();
-        res.status(200).json(participants);
+        const participant = await getAllParticipant();
+        res.status(200).json(participant);
     } catch (error) {
         res.status(500).json({ message: 'Erreur serveur', error: error.message });
     }

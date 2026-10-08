@@ -1,7 +1,7 @@
 import db from '../Config/db.js';
 
 
-async function getAll() {
+async function getAllParticipant() {
     const [rows] = await db.query(
         'SELECT pa_user, pa_event FROM participants'
     );
@@ -60,7 +60,7 @@ async function deleteParticipant(userId, eventId) {
 
 // Exportation globale en fin de fichier
 export {
-    getAll,
+    getAllParticipant,
     getEventsByUser,
     getUsersByEvent,
     insertParticipant,

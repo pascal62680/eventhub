@@ -1,18 +1,23 @@
-/* import express from "express"
-import collaborateController from '../Controllers/collaborate.controller.js'
+import express from 'express';
+
+import { getAllParticipantsController } from '../Controllers/participants.controller.js';
+import { getEventsByUserController } from '../Controllers/participants.controller.js';
+import { getUsersByEventController } from '../Controllers/participants.controller.js';
+import { addParticipantController } from '../Controllers/participants.controller.js';
+import { removeParticipantController } from '../Controllers/participants.controller.js';
+
+import checkToken from '../Middleware/auth.middleware.js';
 
 const router = express.Router();
 
-router.get("/", collaborateController.getAll)
+router.get('/', getAllParticipantsController);
 
-// getByuserId -> Pour récuperer toutes les tache ou mon user collabore
-router.get('/user/:userID', collaborateController.getByUserId);
+router.get('/user/:userId', getEventsByUserController);
 
-// getByTaskId -> Pour récuperer tous les users qui collabore sur une taches
-router.get('/task/:taskID', collaborateController.getByTaskId);
+router.get('/event/:eventId', getUsersByEventController);
 
-router.post("/", collaborateController.insert)
+router.post('/', checkToken, addParticipantController);
 
-router.delete("/:userID/:taskID", collaborateController.deleteCollaborate)
+router.delete('/:userId/:eventId', checkToken, removeParticipantController);
 
-export default router; */
+export default router;

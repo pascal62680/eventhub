@@ -1,10 +1,11 @@
-import Db from '../Config/db.js'
+import db from '../Config/db.js'
 
 // tout recuperer
-async function getall() {
-    const [row] = await Db.query ('SELECT co_id, co_comments, co_user, co_event FROM comments'
-};
+async function getAllParticipants() {
+    const [rows] = await db.query ('SELECT co_id, co_comments, co_user, co_event FROM comments');
+
 return rows;
+};
 
 // retrouver un commentaire
 async function getCommentById(id) {

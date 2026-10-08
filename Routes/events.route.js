@@ -1,21 +1,23 @@
-/* import express from 'express'
-import TaskController from '../Controllers/tasks.controller.js';
+import express from 'express';
+
+import { getAllEventsController } from '../Controllers/events.controller.js';
+import { getEventByIdController } from '../Controllers/events.controller.js';
+import { createEventController } from '../Controllers/events.controller.js';
+import { updateEventController } from '../Controllers/events.controller.js';
+import { deleteEventController } from '../Controllers/events.controller.js';
+
+import checkToken from '../Middleware/auth.middleware.js';
+
 const router = express.Router();
 
-// GET /tasks -> Je récupère toutes les taches
-router.get('/', TaskController.getAll)
+router.get('/', getAllEventsController);
 
-// GET /tasks/:id -> Je récupère une tache via son ID
-router.get('/:id', TaskController.getById);
+router.get('/:id', getEventByIdController);
 
-// PATCH /tasks/:id -> Je modifie une tache avec son Id en parametre
-router.patch('/:id', TaskController.update);
+router.post('/', checkToken, createEventController);
 
-// DELETE /tasks/:id -> Je supprime une tache via son Id
-router.delete('/:id', TaskController.deleteTask);
+router.patch('/:id', checkToken, updateEventController);
 
-// POST /tasks -> J'ajoute une tache
-router.post('/', TaskController.insert);
+router.delete('/:id', checkToken, deleteEventController);
 
-// On exporte le router pour pouvoir l'utiliser dans le fichier index.js
-export default router; */
+export default router;
