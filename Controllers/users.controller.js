@@ -1,86 +1,77 @@
-/* import UsersModel from '../Models/users.model.js'
-// Dépendance pour hasher les mots de passe
-import bcrypt from 'bcrypt';
+import { getAllUsers } from '../Models/users.model.js';
+import { getUserById } from '../Models/users.model.js';
+import { insertUser } from '../Models/users.model.js';
+import { updateUser } from '../Models/users.model.js';
+import { deleteUser } from '../Models/users.model.js';
 
-async function getAll(req,res) {
+// 1. Récupérer tous les utilisateurs
+async function getAllUsersController(req, res) {
     try {
-        const users = await UsersModel.getAll();
-        res.json(users);
+        const users = await getAllUsers();
+        res.status(200).json(users);
     } catch (error) {
-        res.status(500).json({error: "Une erreur est survenue lors de la récupération des users"})
+        res.status(500).json({ message: 'Erreur serveur', error: error.message });
     }
 }
 
-async function getById(req,res) {
-    try {
-        const id = req.params.id;
-        const users = await UsersModel.getById(id);
-        res.json(users[0]);
-    } catch (error) {
-        res.status(500).json({error: "Une erreur est survenue lors de la récupération du user"})
-    }
-}
-
-async function update(req,res) {
+// 2. Récupérer un utilisateur par son ID
+async function getUserByIdController(req, res) {
     try {
         const id = req.params.id;
-        const body = req.body;
-        
-        let userToUpdate = await UsersModel.getById(id);
-        if (userToUpdate.length === 0) {
-            res.status(404).json({error : "L'utilisateur n'existe pas"})
-        }
-        // [{}] = {}
-        userToUpdate = userToUpdate[0];
+        const user = await getUserById(id);
 
-        if(body.username){
-            userToUpdate.us_username = body.username;
-        }
-        
-        if(body.email){
-            userToUpdate.us_email = body.email;
+        if (!user) {
+            return res.status(404).json({ message: 'Utilisateur non trouvé' });
         }
 
-        const updated = await UsersModel.update(id, userToUpdate)
-        res.json({message: "Votre modification a bien été effectué", user : userToUpdate});
+        res.status(200).json(user);
     } catch (error) {
-        res.status(500).json({error: "Une erreur est survenu lors de la modification du user"})
+        res.status(500).json({ message: 'Erreur serveur', error: error.message });
     }
 }
 
-async function insert(req,res) {
-    try {
-        const body = req.body;
-        // Hasher le mot de de passe
-        body.password = bcrypt.hashSync(body.password, 10);
-
-        const inserted = await UsersModel.insert(body);
-        res.status(201).json(inserted)
-    } catch (error) {
-        res.status(500).json({error: "Une erreur est survenu lors de l'insertion du user"})   
-    }
-}
-
-async function deleteUser(req,res) {
+// 3. Modifier le profil d'un utilisateur
+async function updateUserController(req, res) {
     try {
         const id = req.params.id;
-        const user = await UsersModel.getById(id);
-        if (user.length === 0) {
-            return res.status(404).json({error : "L'utilisateur n'existe pas !"})
+        const username = req.body.username;
+        const email = req.body.email;
+
+        if (!username || !email) {
+            return res.status(400).json({ message: 'Le nom d\'utilisateur et l\'email sont requis' });
         }
-        const deleted = await UsersModel.deleteUser(id);
-        res.json(deleted);
+
+        const result = await updateUser(id, username, email);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'Utilisateur non trouvé' });
+        }
+
+        res.status(200).json({ message: 'Profil utilisateur mis à jour avec succès' });
     } catch (error) {
-        res.status(500).json({error: "Une erreur est survenu lors de la suppression du user"})   
-        
+        res.status(500).json({ message: 'Erreur serveur', error: error.message });
     }
 }
 
-export default {
-    getAll,
-    getById,
-    update,
-    insert,
-    deleteUser
+// 4. Supprimer un utilisateur
+async function deleteUserController(req, res) {
+    try {
+        const id = req.params.id;
+        const result = await deleteUser(id);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'Utilisateur non trouvé' });
+        }
+
+        res.status(200).json({ message: 'Utilisateur supprimé avec succès' });
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur serveur', error: error.message });
+    }
 }
- */
+
+export {
+    getAllUsersController,
+    getUserByIdController,
+    updateUserController,
+    deleteUserController
+};
