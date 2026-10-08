@@ -1,32 +1,53 @@
-/* import Db from '../Config/db.js'
+import Db from '../Config/db.js'
 
-async function getAll() {
-    const [rows] = await Db.query('SELECT co_id, co_comment, co_user, co_task FROM comments');
-    return rows;
+// tout recuperer
+async function getall() {
+    const [row] = await Db.query ('SELECT co_id, co_comments, co_user, co_event FROM comments'
+};
+return rows;
+
+// retrouver un commentaire
+async function getCommentById(id) {
+    const [rows] = await db.query(
+        'SELECT co_id, co_comments, co_user, co_event FROM comments WHERE co_id = ?',
+        [id]
+    );
+    return rows[0];
 }
-async function getById(id) {
-    const [rows] = await Db.query('SELECT co_id, co_comment, co_user, co_task FROM comments WHERE co_id = ?', [id]);
-    return rows;
+// Insérer un commentaire
+async function insertComment(comment, user, event) {
+    const [result] = await db.query(
+        'INSERT INTO comments (co_comments, co_user, co_event) VALUES (?, ?, ?)',
+        [comment, user, event]
+    );
+    return result;
 }
 
-async function update(id, comments) {
-    const updated = await Db.query('UPDATE comments SET co_comment = ? WHERE co_id = ?', [comments.co_comment,id]);
-    return updated;
+// Modifier 
+async function updateComment(id, comment) {
+    const [result] = await db.query(
+        'UPDATE comments SET co_comments = ? WHERE co_id = ?',
+        [comment, id]
+    );
+    return result;
 }
 
-async function insert(comment) {
-    const inserted = await Db.query('INSERT INTO comments(co_comment, co_user, co_task) VALUES (?,?,?)', [comment.comment, comment.user, comment.task]);
-    return inserted;
-}
-async function deleteComments(id) {
-    const deleted = await Db.query('DELETE FROM comments WHERE co_id = ?', [id]);
-    return deleted;
+// Supprimer 
+async function deleteComment(id) {
+    const [result] = await db.query(
+        'DELETE FROM comments WHERE co_id = ?',
+        [id]
+    );
+    return result;
 }
 
-export default {
+
+export {
     getAll,
-    getById,
-    update,
-    insert, 
-    deleteComments
-} */
+    getCommentById,
+    insertComment,
+    updateComment,
+    deleteComment
+};
+
+
