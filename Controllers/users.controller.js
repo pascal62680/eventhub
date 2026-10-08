@@ -1,10 +1,10 @@
 import { getAllUsers } from '../Models/users.model.js';
 import { getUserById } from '../Models/users.model.js';
-import { insertUser } from '../Models/users.model.js';
+
 import { updateUser } from '../Models/users.model.js';
 import { deleteUser } from '../Models/users.model.js';
 
-// 1. Récupérer tous les utilisateurs
+
 async function getAllUsersController(req, res) {
     try {
         const users = await getAllUsers();
@@ -14,7 +14,7 @@ async function getAllUsersController(req, res) {
     }
 }
 
-// 2. Récupérer un utilisateur par son ID
+
 async function getUserByIdController(req, res) {
     try {
         const id = req.params.id;
@@ -26,7 +26,7 @@ async function getUserByIdController(req, res) {
 
         res.status(200).json(user);
     } catch (error) {
-        res.status(500).json({ message: 'Erreur serveur', error: error.message });
+        res.status(500).json({ message: 'Erreur serveur', error: "utilisateur inconnu" });
     }
 }
 
@@ -38,7 +38,7 @@ async function updateUserController(req, res) {
         const email = req.body.email;
 
         if (!username || !email) {
-            return res.status(400).json({ message: 'Le nom d\'utilisateur et l\'email sont requis' });
+            return res.status(400).json({ message: 'Le nom d\'utilisateur et l\'email sont obligatoires' });
         }
 
         const result = await updateUser(id, username, email);
